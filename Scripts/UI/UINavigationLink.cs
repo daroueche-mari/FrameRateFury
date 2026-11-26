@@ -27,14 +27,18 @@ public class UINavigationLink : MonoBehaviour
     public Button ResumeBtn;
     public Button RestartBtn;
     public Button SaveQuitBtn;
-    public Button PlayGameBtn;
     public Button RetryBtn;
     public Button SaveQuitEndBtn;
     public Button PauseBtn;
     public Button ClosePauseBtn;
     public GameObject PreGameManager;
+    public GameObject GManager;
+    public GameObject UIGManager;
+  
 
+    //----------------------------------------------------------------------------
 
+    // State Main Menu 
     public void PlayBtnAction()
     {
         if (!PreGamePanel.activeInHierarchy && MainMenuPanel.activeInHierarchy)
@@ -97,11 +101,15 @@ public class UINavigationLink : MonoBehaviour
     }
 
 
+    //----------------------------------------------------------------------------
+
+    // State In Game 
     public void ResumeGame()
     {
         if (GamePanel.activeInHierarchy && PausePanel.activeInHierarchy)
         {
             PausePanel.SetActive(false);
+            Time.timeScale = 1f;
         }
     }
 
@@ -111,10 +119,10 @@ public class UINavigationLink : MonoBehaviour
         {
             PausePanel.SetActive(false);
             GamePanel.SetActive(false);
+            GManager.SetActive(false);
             PreGameManager.SetActive(false);
             PreGameManager.SetActive(true);
             PreGamePanel.SetActive(true);
-
         }
     }
 
@@ -125,27 +133,10 @@ public class UINavigationLink : MonoBehaviour
             // SaveGame();
             PausePanel.SetActive(false);
             GamePanel.SetActive(false);
+            GManager.SetActive(false);
+            UIGManager.SetActive(false);
             MainMenuPanel.SetActive(true);
         }
-    }
-
-    public void RetryGame()
-    {
-        if (EndGamePanel.activeInHierarchy)
-        {
-            EndGamePanel.SetActive(false);
-            PreGameManager.SetActive(false);
-            PreGameManager.SetActive(true);
-            PreGamePanel.SetActive(true);
-
-        }
-    }
-
-    public void SaveQuitEnd()
-    {
-        // SaveGame();
-        EndGamePanel.SetActive(false);
-        MainMenuPanel.SetActive(true);
     }
 
 
@@ -154,6 +145,7 @@ public class UINavigationLink : MonoBehaviour
     {
         if (!PausePanel.activeInHierarchy)
         {
+            Time.timeScale = 0f;
             PausePanel.SetActive(true);
         }
     }
@@ -163,10 +155,32 @@ public class UINavigationLink : MonoBehaviour
         if (PausePanel.activeInHierarchy)
         {
             PausePanel.SetActive(false);
+            Time.timeScale = 1f;
         }
     }
 
+    //----------------------------------------------------------------------------
+    // State End Game
+    public void RetryGame()
+    {
+        if (EndGamePanel.activeInHierarchy)
+        {
+            EndGamePanel.SetActive(false);
+            GamePanel.SetActive(false);
+            PreGameManager.SetActive(false);
+            PreGameManager.SetActive(true);
+            PreGamePanel.SetActive(true);
+        }
+    }
 
+    public void SaveQuitEnd()
+    {
+        // SaveGame();
+        EndGamePanel.SetActive(false);
+        UIGManager.SetActive(false);
+        GManager .SetActive(false);
+        MainMenuPanel.SetActive(true);
+    }
 
 
 }
