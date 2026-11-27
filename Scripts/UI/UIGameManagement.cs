@@ -11,10 +11,10 @@ public class UIGameManagement : MonoBehaviour
 
     private void OnEnable()
     {
-        ValueWave.text = 15.ToString();
-        ValueScore.text = 15.ToString();
-        ValueEnemy.text = 15.ToString();
-        PlayerNameTxt.text = "test"; // PlayerName class
+        ValueWave.text = "VAGUE : " + 1.ToString();
+        ValueScore.text = "SCORE : " + 0.ToString();
+        ValueEnemy.text = "ENEMY : " + 0.ToString();
+        PlayerNameTxt.text = MyCharacter.mylistChar[0].Name;
     }
 
 
@@ -27,7 +27,10 @@ public class UIGameManagement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        int fps = (int)(1.0f / Time.deltaTime);
-        ValueFps.text = fps.ToString();
+        if (Time.unscaledDeltaTime > 0f)
+        {
+            int fps = (int)(1.0f / Time.unscaledDeltaTime);
+            ValueFps.text = "FPS : " + fps.ToString();
+        }
     }
 }
