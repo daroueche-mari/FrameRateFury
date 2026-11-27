@@ -1,6 +1,7 @@
 using UnityEngine;
 
 // Vagues infinies : chaque vague fait apparaître plus d'ennemis, choisis au hasard selon des poids.
+// Une vague est finie quand tous ses ennemis sont apparus et qu'il n'en reste plus à l'écran.
 public class WaveManager : MonoBehaviour
 {
     [SerializeField] private WaveSettings settings;
@@ -18,33 +19,25 @@ public class WaveManager : MonoBehaviour
         get { return currentWave; }
     }
 
-    // le WaveManager est désactivé pendant le boss, et doit quand même recevoir la remise à zéro.
-    private void Awake()
-    {
-        GameEvents.GameReset += OnGameReset;
-    }
+    private bool paused;   // true pendant le combat contre le boss
 
-    private void OnDestroy()
+    // Appelé à chaque fois que GameRoot est activé : nouvelle partie, retour à la vague 1.
+    private void OnEnable()
     {
-        GameEvents.GameReset -= OnGameReset;
-    }
-
-    private void Start()
-    {
+        paused = false;
         SpawnStats.Reset();
         StartWave(1);
     }
 
-    // Nouvelle partie : retour à la vague 1, statistiques remises à zéro.
-    private void OnGameReset()
+    // Le BossManager met les vagues en pause pendant le boss, puis les relance.
+    public void SetPaused(bool value)
     {
-        SpawnStats.Reset();
-        StartWave(1);
+        paused = value;
     }
 
     private void Update()
     {
-        if (!GameManager.Instance.IsPlaying)
+        if (paused)
         {
             return;
         }

@@ -1,48 +1,35 @@
 using UnityEngine;
 
-// Gère l'état de la partie
-[DefaultExecutionOrder(-50)]
+// Logique générale de la partie : réglages au lancement et fin de partie.
+// Il est sur l'objet Managers, rangé dans GameRoot avec tout le reste du jeu.
+// C'est l'UI qui active GameRoot (la partie commence) et qui le désactive (la partie s'arrête).
+// La pause se fait aussi côté UI, avec Time.timeScale dans les boutons.
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
     [SerializeField] private int targetFrameRate = 60;
 
-    // Pour tester la logique sans l'UI
-    [SerializeField] private bool startWithoutMenu = false;
+    private bool isGameOver;
 
-    private GameState state;
-
-    public GameState State
+    public bool IsGameOver
     {
-        get { return state; }
-    }
-
-    public bool IsPlaying
-    {
-        get { return state == GameState.Playing; }
+        get { return isGameOver; }
     }
 
     private void Awake()
     {
         Instance = this;
 
-        // Sur Android, Unity est limité à 30 FPS par défaut
+        // Sur Android, Unity est limité à 30 FPS par défaut : on force 60.
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = targetFrameRate;
-        Time.timeScale = 1f;
     }
 
-    private void Start()
+    // Appelé à chaque fois que GameRoot est activé : nouvelle partie.
+    private void OnEnable()
     {
-        if (startWithoutMenu)
-        {
-            SetState(GameState.Playing);
-        }
-        else
-        {
-            SetState(GameState.Menu);
-        }
+        isGameOver = false;
     }
 
     private void OnDestroy()
@@ -53,88 +40,20 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Appelé automatiquement quand l'application passe en arrière-plan.
-    private void OnApplicationPause(bool paused)
-    {
-        if (paused)
-        {
-            Pause();
-        }
-    }
-
-    // L'UI l'appelle quand le joueur touche l'écran "prêt".
-    public void StartGame()
-    {
-        if (state == GameState.Menu)
-        {
-            SetState(GameState.Playing);
-        }
-    }
-
-    public void Pause()
-    {
-        if (state == GameState.Playing)
-        {
-            SetState(GameState.Paused);
-        }
-    }
-
-    public void Resume()
-    {
-        if (state == GameState.Paused)
-        {
-            SetState(GameState.Playing);
-        }
-    }
-
-    // Recommencer / Rejouer
-    public void Restart()
-    {
-        ResetGame();
-        SetState(GameState.Menu);
-    }
-
-    // Retour au menu principal
-    public void QuitToMenu()
-    {
-        ResetGame();
-        SetState(GameState.Menu);
-    }
-
+    // Appelé par PlayerHealth quand les PV tombent à 0.
+    // L'UI reçoit l'event GameOver : elle affiche l'écran de fin et met Time.timeScale à 0.
     public void TriggerGameOver()
     {
-        if (state == GameState.GameOver)
+        if (isGameOver)
         {
             return;
         }
 
+        isGameOver = true;
         ScoreManager.Instance.SaveBestScore();
-        SetState(GameState.GameOver);
         GameEvents.RaiseGameOver(ScoreManager.Instance.Score, ScoreManager.Instance.BestScore);
 
+        // Statistiques d'apparition pour le README.
         Debug.Log(SpawnStats.BuildReport());
-    }
-
-    // Remet la partie à zéro sans recharger la scène
-    private void ResetGame()
-    {
-        EntityRegistry.ReleaseAll();
-        GameEvents.RaiseGameReset();
-    }
-
-    private void SetState(GameState newState)
-    {
-        state = newState;
-
-        if (state == GameState.Playing)
-        {
-            Time.timeScale = 1f;
-        }
-        else
-        {
-            Time.timeScale = 0f;
-        }
-
-        GameEvents.RaiseStateChanged(state);
     }
 }

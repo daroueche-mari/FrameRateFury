@@ -1,6 +1,7 @@
 using UnityEngine;
 
-// Version pas opti : chaque tir crée un objet
+// Version NON optimisée : chaque tir crée un objet, chaque balle détruite est supprimée.
+// Coût : allocations mémoire constantes, donc passages du Garbage Collector et saccades.
 public class NaiveProjectileSpawner : IProjectileSpawner
 {
     private Projectile prefab;

@@ -1,6 +1,7 @@
 using UnityEngine;
 
-// Un seul script pour tous les ennemis
+// Un seul script pour tous les ennemis : leurs stats, leur déplacement et leur tir viennent du EnemyData.
+// Le prefab a juste un SpriteRenderer et ce script.
 public class Enemy : MonoBehaviour, IListed
 {
     private enum StopPhase
@@ -80,7 +81,7 @@ public class Enemy : MonoBehaviour, IListed
         }
 
         fireInterval = data.fireInterval / fireRateMultiplier;
-        // Premier tir décalé au hasard
+        // Premier tir décalé au hasard, pour que les ennemis ne tirent pas tous en même temps.
         fireTimer = fireInterval * Random.Range(0.5f, 1f);
 
         transform.position = position;
@@ -100,7 +101,7 @@ public class Enemy : MonoBehaviour, IListed
         Move(deltaTime);
         transform.position = position;
 
-        // Sorti par le bas 
+        // Sorti par le bas : il disparaît sans donner de points.
         if (position.y < ScreenBounds.Min.y - OffScreenMargin)
         {
             Release();
@@ -139,7 +140,7 @@ public class Enemy : MonoBehaviour, IListed
         }
     }
 
-    // Le boss descend jusqu'à sa place
+    // Le boss descend jusqu'à sa place, puis se balance de gauche à droite sans jamais repartir.
     private void MoveBoss(float deltaTime)
     {
         if (stopPhase == StopPhase.Arriving)
@@ -262,7 +263,7 @@ public class Enemy : MonoBehaviour, IListed
         Release();
     }
 
-    // Fait disparaître l'ennemi sans points ni explosion
+    // Fait disparaître l'ennemi sans points ni explosion (remise à zéro de la partie).
     public void Despawn()
     {
         Release();

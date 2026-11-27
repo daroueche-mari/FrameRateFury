@@ -1,6 +1,7 @@
 using UnityEngine;
 
-// Un seul script pour tous les projectiles
+// Un seul script pour tous les projectiles : leur comportement vient du ProjectileData.
+// Le prefab a juste un SpriteRenderer et ce script (pas de Rigidbody2D ni de Collider2D).
 [RequireComponent(typeof(SpriteRenderer))]
 public class Projectile : MonoBehaviour, IListed
 {
@@ -93,7 +94,7 @@ public class Projectile : MonoBehaviour, IListed
         }
     }
 
-    // Rend le projectile à son spawner
+    // Rend le projectile à son spawner (pool ou Destroy selon la version).
     public void Release()
     {
         if (!isActive)

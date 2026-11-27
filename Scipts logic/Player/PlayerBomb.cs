@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// La bombe (attaque spéciale du joueur)
+// La bombe
 public class PlayerBomb : MonoBehaviour
 {
     [SerializeField] private float speed = 4f;
@@ -27,7 +27,7 @@ public class PlayerBomb : MonoBehaviour
         gameObject.SetActive(true);
     }
 
-    // Fait disparaître la bombe sans explosion
+    // Fait disparaître la bombe sans explosion (remise à zéro de la partie).
     public void Cancel()
     {
         isActive = false;
@@ -36,7 +36,7 @@ public class PlayerBomb : MonoBehaviour
 
     private void Update()
     {
-        if (!isActive || !GameManager.Instance.IsPlaying)
+        if (!isActive)
         {
             return;
         }
@@ -76,6 +76,7 @@ public class PlayerBomb : MonoBehaviour
         Vector2 center = position;
 
         // Dégâts aux ennemis dans le rayon.
+        // Boucle à l'envers : un ennemi tué est retiré de la liste pendant la boucle.
         EntityList<Enemy> enemies = EntityRegistry.Enemies;
 
         for (int i = enemies.Count - 1; i >= 0; i--)
@@ -109,7 +110,8 @@ public class PlayerBomb : MonoBehaviour
 
         GameEvents.RaiseBombExploded(center, explosionRadius);
 
-        // isActive passe à false APRÈS les dégâts 
+        // isActive passe à false APRÈS les dégâts : les ennemis tués par la bombe
+        // ne rechargent pas la jauge (voir PlayerSpecialAttack).
         isActive = false;
         gameObject.SetActive(false);
     }

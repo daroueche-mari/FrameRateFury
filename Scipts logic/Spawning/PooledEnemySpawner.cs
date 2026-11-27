@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
-// Version opti : un pool par type d'ennemi
+// Version optimisée : un pool par type d'ennemi (chaque type a son propre prefab).
 public class PooledEnemySpawner : IEnemySpawner
 {
     private Transform parent;
@@ -33,7 +33,7 @@ public class PooledEnemySpawner : IEnemySpawner
         GetPool(enemy.Data).Release(enemy);
     }
 
-    // Crée le pool d'un type d'ennemi
+    // Crée le pool d'un type d'ennemi la première fois qu'on en a besoin.
     private ObjectPool<Enemy> GetPool(EnemyData data)
     {
         ObjectPool<Enemy> pool;
@@ -44,7 +44,7 @@ public class PooledEnemySpawner : IEnemySpawner
                 () => CreateEnemy(data),
                 enemy => enemy.gameObject.SetActive(true),
                 enemy => enemy.gameObject.SetActive(false),
-                enemy => Object.Destroy(enemy.gameObject),
+                OnDestroyEnemy,
                 false,
                 20,
                 maxSizePerType);
@@ -53,6 +53,15 @@ public class PooledEnemySpawner : IEnemySpawner
         }
 
         return pool;
+    }
+
+    // En quittant le mode Play, les ennemis ont déjà été détruits avec la scène.
+    private void OnDestroyEnemy(Enemy enemy)
+    {
+        if (enemy != null)
+        {
+            Object.Destroy(enemy.gameObject);
+        }
     }
 
     private Enemy CreateEnemy(EnemyData data)

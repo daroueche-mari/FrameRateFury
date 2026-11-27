@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// Garde le score de la partie et le meilleur score
+// Garde le score de la partie et le meilleur score (sauvegardé sur l'appareil).
 public class ScoreManager : MonoBehaviour
 {
     public const string BestScoreKey = "BestScore";
@@ -24,29 +24,21 @@ public class ScoreManager : MonoBehaviour
     {
         Instance = this;
         bestScore = PlayerPrefs.GetInt(BestScoreKey, 0);
-        GameEvents.GameReset += OnGameReset;
     }
 
-    private void Start()
+    // Appelé à chaque fois que GameRoot est activé : le score repart à 0.
+    private void OnEnable()
     {
+        score = 0;
         GameEvents.RaiseScoreChanged(score);
     }
 
     private void OnDestroy()
     {
-        GameEvents.GameReset -= OnGameReset;
-
         if (Instance == this)
         {
             Instance = null;
         }
-    }
-
-    // Nouvelle partie
-    private void OnGameReset()
-    {
-        score = 0;
-        GameEvents.RaiseScoreChanged(score);
     }
 
     public void AddScore(int amount)

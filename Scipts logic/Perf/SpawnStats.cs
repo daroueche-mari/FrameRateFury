@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Text;
 
+// Compte les ennemis tirés au hasard, par vague, pour les tableaux statistiques du README.
+// Le tableau est affiché dans la Console au Game Over (format Markdown, à copier-coller).
 public static class SpawnStats
 {
     private static Dictionary<int, Dictionary<string, int>> countsByWave = new Dictionary<int, Dictionary<string, int>>();

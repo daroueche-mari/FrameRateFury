@@ -1,21 +1,23 @@
 using UnityEngine;
 
+// Tir automatique et continu du joueur, droit vers le haut.
 public class PlayerShooter : MonoBehaviour
 {
-      [SerializeField] private ProjectileData projectile;
+    [SerializeField] private ProjectileData projectile;
     [SerializeField] private float fireInterval = 0.12f;
     [SerializeField] private Vector2 muzzleOffset = new Vector2(0f, 0.5f);
 
     private float fireTimer;
 
-    // Update is called once per frame
+    // Nouvelle partie : premier tir immédiat.
+    private void OnEnable()
+    {
+        fireTimer = 0f;
+    }
+
+    // En pause, Time.deltaTime = 0 : le timer n'avance plus, donc plus de tir.
     private void Update()
     {
-        if (!GameManager.Instance.IsPlaying)
-        {
-            return;
-        }
-
         fireTimer -= Time.deltaTime;
 
         if (fireTimer <= 0f)

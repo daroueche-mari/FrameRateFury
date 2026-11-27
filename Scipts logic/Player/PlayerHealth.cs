@@ -32,24 +32,9 @@ public class PlayerHealth : MonoBehaviour
         get { return currentHealth <= 0; }
     }
 
-    private void Awake()
-    {
-        currentHealth = maxHealth;
-        GameEvents.GameReset += OnGameReset;
-    }
-
-    private void OnDestroy()
-    {
-        GameEvents.GameReset -= OnGameReset;
-    }
-
-    private void Start()
-    {
-        GameEvents.RaiseHealthChanged(currentHealth, maxHealth);
-    }
-
-    // Nouvelle partie : PV au maximum, plus d'invincibilité, sprite visible.
-    private void OnGameReset()
+    // Appelé à chaque fois que GameRoot est activé :
+    // nouvelle partie, PV au maximum, plus d'invincibilité, sprite visible.
+    private void OnEnable()
     {
         currentHealth = maxHealth;
         invincibilityTimer = 0f;

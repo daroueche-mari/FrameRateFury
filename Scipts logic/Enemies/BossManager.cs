@@ -1,6 +1,7 @@
 using UnityEngine;
 
 // Fait apparaître le boss tous les 10 000 points.
+// Pendant le combat contre le boss, les vagues normales sont mises en pause.
 public class BossManager : MonoBehaviour
 {
     [SerializeField] private EnemyData bossData;
@@ -10,38 +11,21 @@ public class BossManager : MonoBehaviour
 
     private int nextBossScore;
     private bool bossAlive;
-    private bool wavesWerePaused;
 
+    // Appelé à chaque fois que GameRoot est activé : nouvelle partie, prochain boss à 10 000.
     private void OnEnable()
     {
         GameEvents.ScoreChanged += OnScoreChanged;
         GameEvents.BossDefeated += OnBossDefeated;
-        GameEvents.GameReset += OnGameReset;
+
+        bossAlive = false;
+        nextBossScore = pointsPerBoss;
     }
 
     private void OnDisable()
     {
         GameEvents.ScoreChanged -= OnScoreChanged;
         GameEvents.BossDefeated -= OnBossDefeated;
-        GameEvents.GameReset -= OnGameReset;
-    }
-
-    private void Awake()
-    {
-        nextBossScore = pointsPerBoss;
-    }
-
-    // Nouvelle partie
-    private void OnGameReset()
-    {
-        bossAlive = false;
-        nextBossScore = pointsPerBoss;
-
-        if (wavesWerePaused)
-        {
-            waveManager.enabled = true;
-            wavesWerePaused = false;
-        }
     }
 
     private void OnScoreChanged(int score)
@@ -51,7 +35,7 @@ public class BossManager : MonoBehaviour
             return;
         }
 
-        // Prochain boss au multiple de 10 000 suivant
+        // Prochain boss au multiple de 10 000 suivant (20 000, 30 000...).
         nextBossScore = (score / pointsPerBoss + 1) * pointsPerBoss;
         SpawnBoss();
     }
@@ -60,12 +44,9 @@ public class BossManager : MonoBehaviour
     {
         bossAlive = true;
 
-        // On ne relancera les vagues que si c'est nous qui les avons arrêtées
-        wavesWerePaused = false;
-        if (pauseWavesDuringBoss && waveManager != null && waveManager.enabled)
+        if (pauseWavesDuringBoss && waveManager != null)
         {
-            waveManager.enabled = false;
-            wavesWerePaused = true;
+            waveManager.SetPaused(true);
         }
 
         float centerX = (ScreenBounds.Min.x + ScreenBounds.Max.x) / 2f;
@@ -79,10 +60,9 @@ public class BossManager : MonoBehaviour
     {
         bossAlive = false;
 
-        if (wavesWerePaused)
+        if (waveManager != null)
         {
-            waveManager.enabled = true;
-            wavesWerePaused = false;
+            waveManager.SetPaused(false);
         }
     }
 }

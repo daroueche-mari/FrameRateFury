@@ -1,6 +1,8 @@
 using UnityEngine;
 
-// Point d'accès unique aux spawners.
+// Point d'accès unique aux spawners. La case "Use Optimization" choisit la version :
+// décochée = Instantiate / Destroy, cochée = object pooling.
+// C'est le seul réglage à changer pour mesurer "avant / après optimisation".
 [DefaultExecutionOrder(-50)]
 public class SpawnService : MonoBehaviour
 {
@@ -37,6 +39,14 @@ public class SpawnService : MonoBehaviour
             Projectiles = new NaiveProjectileSpawner(projectilePrefab, projectileParent);
             Enemies = new NaiveEnemySpawner(enemyParent);
         }
+    }
+
+    // Appelé quand GameRoot est désactivé (fin de partie, retour au menu) :
+    // tous les ennemis et toutes les balles retournent dans les pools.
+    // Les objets "Projectiles" et "Enemies" sont en dehors de GameRoot, donc ils sont encore actifs ici.
+    private void OnDisable()
+    {
+        EntityRegistry.ReleaseAll();
     }
 
     private void OnDestroy()

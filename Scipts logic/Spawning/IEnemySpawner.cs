@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// Même principe que IProjectileSpawner
+// Même principe que IProjectileSpawner, pour les ennemis.
 public interface IEnemySpawner
 {
     int CreatedCount { get; }

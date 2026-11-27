@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float speed = 8f;
     [SerializeField] private float edgePadding = 0.4f;     // demi-taille du vaisseau
     [SerializeField] private float hitboxRadius = 0.15f;   // plus petite que le sprite
-    [SerializeField] private float bottomHudMargin = 2.5f; 
+    [SerializeField] private float bottomHudMargin = 2.5f; // hauteur du HUD en bas de l'écran
 
     private Vector2 position;
     private Vector2 startPosition;
@@ -29,33 +29,26 @@ public class PlayerController : MonoBehaviour
         Instance = this;
         position = transform.position;
         startPosition = position;
-        GameEvents.GameReset += OnGameReset;
     }
 
     private void OnDestroy()
     {
-        GameEvents.GameReset -= OnGameReset;
-
         if (Instance == this)
         {
             Instance = null;
         }
     }
 
-    //le vaisseau revient à sa place de départ.
-    private void OnGameReset()
+    // Appelé à chaque fois que GameRoot est activé : le vaisseau revient à sa place de départ.
+    private void OnEnable()
     {
         position = startPosition;
         transform.position = position;
     }
 
+    // En pause le vaisseau ne bouge plus.
     private void Update()
     {
-        if (!GameManager.Instance.IsPlaying)
-        {
-            return;
-        }
-
         position += joystick.Direction * speed * Time.deltaTime;
 
         position.x = Mathf.Clamp(position.x, ScreenBounds.Min.x + edgePadding, ScreenBounds.Max.x - edgePadding);

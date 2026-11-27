@@ -6,7 +6,9 @@ public interface IListed
     int ListIndex { get; set; }
 }
 
-// Liste où l'ajout et la suppression sont instantanés
+// Liste où l'ajout et la suppression sont instantanés, même avec des milliers d'éléments.
+// Pour supprimer, on met le dernier élément à la place de celui qu'on enlève
+// (au lieu de décaler toute la liste comme List.Remove).
 public class EntityList<T> where T : class, IListed
 {
     private List<T> items = new List<T>();
@@ -76,7 +78,8 @@ public static class EntityRegistry
         get { return Enemies.Count + PlayerProjectiles.Count + EnemyProjectiles.Count; }
     }
 
-    // Retire tous les ennemis et toutes les balles 
+    // Retire tous les ennemis et toutes les balles (Recommencer / Retour au menu).
+    // Boucles à l'envers : chaque objet retiré quitte la liste pendant la boucle.
     public static void ReleaseAll()
     {
         for (int i = Enemies.Count - 1; i >= 0; i--)

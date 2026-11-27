@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.Pool;
 
-// Version opti : object pooling. Les balles sont créées une fois, puis réutilisées.
+// Version optimisée : object pooling. Les balles sont créées une fois, puis réutilisées.
+// Au lieu de Destroy, on les désactive et on les range dans le pool.
 public class PooledProjectileSpawner : IProjectileSpawner
 {
     private Projectile prefab;
@@ -19,6 +20,7 @@ public class PooledProjectileSpawner : IProjectileSpawner
         prefab = projectilePrefab;
         parent = projectileParent;
 
+        // collectionCheck = false : la vérification anti-double Release coûte cher avec beaucoup d'objets.
         // Le double Release est déjà empêché dans Projectile.Release().
         pool = new ObjectPool<Projectile>(CreateProjectile, OnGet, OnRelease, OnDestroyProjectile, false, prewarmCount, maxSize);
 
@@ -37,7 +39,7 @@ public class PooledProjectileSpawner : IProjectileSpawner
         pool.Release(projectile);
     }
 
-    // Crée des balles à l'avance
+    // Crée des balles à l'avance (pendant le chargement) pour ne pas le faire en pleine partie.
     private void Prewarm(int count)
     {
         Projectile[] temp = new Projectile[count];
@@ -73,6 +75,11 @@ public class PooledProjectileSpawner : IProjectileSpawner
 
     private void OnDestroyProjectile(Projectile projectile)
     {
-        Object.Destroy(projectile.gameObject);
+        // En quittant le mode Play, Unity a déjà détruit les balles avec la scène :
+        // on vérifie qu'elles existent encore avant d'y toucher.
+        if (projectile != null)
+        {
+            Object.Destroy(projectile.gameObject);
+        }
     }
 }

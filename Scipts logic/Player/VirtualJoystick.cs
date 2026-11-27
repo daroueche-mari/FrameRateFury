@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// Joystick virtuel flottant
+// Joystick virtuel flottant : il apparaît là où le pouce touche la moitié basse de l'écran.
 public class VirtualJoystick : MonoBehaviour
 {
     [Header("Réglages")]
@@ -39,7 +39,7 @@ public class VirtualJoystick : MonoBehaviour
         bool justPressed = false;
         Vector2 pointerPosition = Vector2.zero;
 
-        // Sur téléphone 
+        // Sur téléphone : on lit directement le premier doigt posé sur l'écran.
         Touchscreen touchscreen = Touchscreen.current;
         bool touchUsed = false;
 
@@ -54,7 +54,7 @@ public class VirtualJoystick : MonoBehaviour
             }
         }
 
-        // Dans l'éditeur
+        // Dans l'éditeur (ou si personne ne touche l'écran) : la souris.
         Mouse mouse = Mouse.current;
 
         if (!touchUsed && mouse != null)
@@ -108,7 +108,7 @@ public class VirtualJoystick : MonoBehaviour
         }
         else
         {
-            // On remet la force entre 0 et 1
+            // On remet la force entre 0 et 1 après la zone morte, pour un démarrage en douceur.
             float scaledStrength = (strength - deadZone) / (1f - deadZone);
             direction = input.normalized * scaledStrength;
         }

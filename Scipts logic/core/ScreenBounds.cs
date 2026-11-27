@@ -1,10 +1,12 @@
 using UnityEngine;
 
-
+// À mettre sur la Main Camera (orthographique).
+// Garde la même largeur de monde visible sur tous les écrans : seule la hauteur change.
+// Donne les bords de l'écran en coordonnées monde, pour le joueur, les ennemis et les projectiles.
 [DefaultExecutionOrder(-100)]
 [RequireComponent(typeof(Camera))]
 public class ScreenBounds : MonoBehaviour
- {
+{
     [SerializeField] private float worldWidth = 9f;
 
     private static Vector2 min;
@@ -32,7 +34,7 @@ public class ScreenBounds : MonoBehaviour
 
     private void Update()
     {
-        // si change resolu
+        // Recalcule seulement si la résolution change (rotation, simulateur...).
         if (Screen.width != lastScreenWidth || Screen.height != lastScreenHeight)
         {
             Refresh();

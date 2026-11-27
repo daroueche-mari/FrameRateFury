@@ -8,7 +8,7 @@ public enum EnemyMovementType
     Boss            // descend, puis reste en haut en se balançant de gauche à droite
 }
 
-// Données d'un type d'ennemi
+// Données d'un type d'ennemi. Clic droit > Create > FrameRateFury > Enemy Data.
 [CreateAssetMenu(fileName = "EnemyData", menuName = "FrameRateFury/Enemy Data")]
 public class EnemyData : ScriptableObject
 {
@@ -31,7 +31,7 @@ public class EnemyData : ScriptableObject
 
     [Header("Tir")]
     public FirePattern pattern;
-    public FirePattern advancedPattern;   // remplace le pattern à partir d'une vague
+    public FirePattern advancedPattern;   // optionnel : remplace le pattern à partir d'une vague
     public int advancedFromWave = 5;
     public ProjectileData projectile;
     public float fireInterval = 1.5f;
