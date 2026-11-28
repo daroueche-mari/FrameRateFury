@@ -46,7 +46,32 @@ public class PlayerController : MonoBehaviour
         transform.position = position;
     }
 
-    // En pause le vaisseau ne bouge plus.
+    // Remet tout le joueur à zéro
+    public void ResetForNewGame()
+    {
+        position = startPosition;
+        transform.position = position;
+
+        PlayerHealth health = GetComponent<PlayerHealth>();
+        if (health != null)
+        {
+            health.ResetHealth();
+        }
+
+        PlayerSpecialAttack special = GetComponent<PlayerSpecialAttack>();
+        if (special != null)
+        {
+            special.ResetCharge();
+        }
+
+        PlayerShooter shooter = GetComponent<PlayerShooter>();
+        if (shooter != null)
+        {
+            shooter.ResetShooter();
+        }
+    }
+
+    //le vaisseau ne bouge plus.
     private void Update()
     {
         position += joystick.Direction * speed * Time.deltaTime;

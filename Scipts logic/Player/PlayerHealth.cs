@@ -36,6 +36,13 @@ public class PlayerHealth : MonoBehaviour
     // nouvelle partie, PV au maximum, plus d'invincibilité, sprite visible.
     private void OnEnable()
     {
+        ResetHealth();
+    }
+
+    // PV au maximum, plus d'invincibilité, sprite visible.
+    // Appelé quand le Player est rallumé, ou par le GameManager si le Player est resté allumé.
+    public void ResetHealth()
+    {
         currentHealth = maxHealth;
         invincibilityTimer = 0f;
 

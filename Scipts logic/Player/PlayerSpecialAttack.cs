@@ -1,6 +1,7 @@
 using UnityEngine;
 
 // Jauge de l'attaque spéciale : chaque ennemi tué la remplit d'un cran.
+// Quand elle est pleine, la bombe part toute seule (pas de bouton, comme le tir normal).
 public class PlayerSpecialAttack : MonoBehaviour
 {
     [SerializeField] private PlayerBomb bomb;
@@ -23,7 +24,13 @@ public class PlayerSpecialAttack : MonoBehaviour
     private void OnEnable()
     {
         GameEvents.EnemyKilled += OnEnemyKilled;
+        ResetCharge();
+    }
 
+    // Jauge vide, bombe cachée.
+    // Appelé quand le Player est rallumé, ou par le GameManager si le Player est resté allumé.
+    public void ResetCharge()
+    {
         charge = 0;
         bomb.Cancel();
         GameEvents.RaiseSpecialChargeChanged(charge, killsRequired);

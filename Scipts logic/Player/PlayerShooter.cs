@@ -12,6 +12,11 @@ public class PlayerShooter : MonoBehaviour
     // Nouvelle partie : premier tir immédiat.
     private void OnEnable()
     {
+        ResetShooter();
+    }
+
+    public void ResetShooter()
+    {
         fireTimer = 0f;
     }
 
